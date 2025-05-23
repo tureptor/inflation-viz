@@ -73,11 +73,12 @@ class Transformer:
         
 
     def _build_hierarchy(self):
-        def traverse_and_find_parent(target_part_ids: list[str], node):
+
+        def _traverse_and_find_parent(target_part_ids: list[str], node):
             for c in node["children"]:
                 child_part_ids = c["id"].split(".")
                 if all(a in b.split("/") for a,b in zip(target_part_ids, child_part_ids)):
-                    return traverse_and_find_parent(id_, c)
+                    return _traverse_and_find_parent(target_part_ids, c)
             return node
 
 
@@ -91,7 +92,7 @@ class Transformer:
         del self.id_to_name["00"]
 
         for id_ in sorted(self.id_to_name.keys(), key=lambda key_: len(key_.split("."))):
-            parent = traverse_and_find_parent(id_.split("."), self.root)
+            parent = _traverse_and_find_parent(id_.split("."), self.root)
 
             new_node = {
                 "id": id_,
@@ -105,4 +106,5 @@ class Transformer:
     def run(self, rows: Iterator[dict]):
         self._populate_dicts(rows)
         self._build_hierarchy()
-        return json.dumps(self.root, separators=(',', ':'))
+        #return json.dumps(self.root, separators=(',', ':'))
+        return json.dumps(self.root, indent=2)
