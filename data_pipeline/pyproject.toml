@@ -1,0 +1,9 @@
+[project]
+name = "inflation-viz-data-pipeline"
+version = "0.1.0"
+description = "Fetches, parses, and generates JSON from public CPIH dataset"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "requests>=2.32.3",
+]
