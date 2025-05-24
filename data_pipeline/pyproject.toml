@@ -1,7 +1,7 @@
 [project]
-name = "inflation-viz-data-pipeline"
+name = "cpihcsv2json"
 version = "0.1.0"
-description = "Fetches, parses, and generates JSON from public CPIH dataset"
+description = "Fetches ONS MM23 dataset csv, then parses it and generates a hierarchical JSON with CPIH indices and weights"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
