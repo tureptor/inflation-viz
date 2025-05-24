@@ -1,47 +1,8 @@
 import csv
 from typing import Iterator
 
-def parse_csv(lines: Iterator[str]) -> Iterator[dict]:
-    """
-    Parse CSV lines into dictionaries with cleaned column names.
-    Args:
-        lines (Iterator[str]): An iterator over CSV lines, where the first line
-            is the header row.
-    Yields:
-        dict: Each CSV row as a dictionary with cleaned column names.
-    """
-    
-    header = next(lines)
-    col_names = next(csv.reader([header]))
-    fieldnames = clean_col_names(col_names)
-    reader = csv.DictReader(lines,fieldnames=fieldnames)
-    for row in reader:
-        yield row
-
-def clean_col_names(col_names: list[str]) -> list[str]:
-    """
-    Correct inconsistent entries in a list of column names
-    Args:
-        col_names (list[str]): List of original column names.
-    Returns:
-        list[str]: List of cleaned column names.
-    """
-    corrections_dict = corrections()
-    cleaned_col_names = []
-    for col in col_names:
-        corrected = corrections_dict.get(col, col)
-        corrected = corrected.replace(": ", "") # Standardise column names
-        cleaned_col_names.append(corrected)
-    return cleaned_col_names
-
-
-def corrections() -> dict[str, str]:
-    """
-    Return a pre-defined map of corrections for column names.
-    Returns:
-        dict[str, str]: a mapping of column names to cleaned versions.
-    """
-    return {
+# some column names in the raw csv have typos/are inconsistent
+CORRECTIONS_DICT: dict[str,str] = {
         "CPIH INDEX 00: ALL ITEMS 2015=100": 
             "CPIH INDEX 00 : ALL ITEMS 2015=100",
         "CPIH INDEX 02:ALCOHOLIC BEVERAGES,TOBACCO & NARCOTICS 2015=100":
@@ -61,3 +22,35 @@ def corrections() -> dict[str, str]:
         "CPIH WEIGHTS 11.2. : Accommodation services":
             "CPIH WEIGHTS 11.2 : Accommodation services",
     }
+
+def parse_csv(lines: Iterator[str]) -> Iterator[dict[str,str]]:
+    """
+    Parse CSV lines into dictionaries with cleaned column names.
+    Args:
+        lines (Iterator[str]): An iterator over CSV lines, where the first line
+            is the header row.
+    Yields:
+        dict[str,str]: Each CSV row as a dictionary with cleaned column names.
+    """
+    
+    header = next(lines)
+    col_names = next(csv.reader([header]))
+    fieldnames = clean_col_names(col_names)
+    reader = csv.DictReader(lines,fieldnames=fieldnames)
+    for row in reader:
+        yield row
+
+def clean_col_names(col_names: list[str]) -> list[str]:
+    """
+    Correct inconsistent entries in a list of column names
+    Args:
+        col_names (list[str]): List of original column names.
+    Returns:
+        list[str]: List of cleaned column names.
+    """
+    return [
+        CORRECTIONS_DICT
+            .get(col, col)
+            .replace(": ", "")
+        for col in col_names
+    ]
