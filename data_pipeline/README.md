@@ -7,7 +7,8 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ## Usage:
 
-`uv run main.py`
+`uv run main.py`  
+Might want to `> example.json` for now.
 
 ## Development
 
