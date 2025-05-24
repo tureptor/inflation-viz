@@ -3,6 +3,7 @@ import re
 from typing import Iterator
 import json
 
+
 class Transformer:
     """Given the cleaned CSV rows as input, transform it into a hierarchical JSON.
 
@@ -13,25 +14,25 @@ class Transformer:
             to a classification ID ("06.2")
         _id_to_name (dict[str, str]):  map a classification ID ("01.1.1")
             to its name ("Bread & Cereals")
-        _id_to_cpih_weight (dict[str, float]): map a classification ID ("01.2.1") 
+        _id_to_cpih_weight (dict[str, float]): map a classification ID ("01.2.1")
             to its latest CPIH weight (2.1407)
         _id_to_cpih_time_series (dict[str, dict[str, float]]): map a classification ID ("04.2")
             to a dictionary of ("YYYY MMM" -> corresponding CPIH indices)
             e.g. {"1988 JAN": 51.3, "1988 FEB": 51.4, "1988 MAR": 51.4, ... }
     """
 
-    def __init__(self, rows: Iterator[dict[str,str]]):
+    def __init__(self, rows: Iterator[dict[str, str]]):
         """Takes in CSV rows, then populates internal dicts
         using column names and row values.
-        
+
         User must then call .to_json() to generate and return the
-        hierarchical JSON using these dictionaries. 
+        hierarchical JSON using these dictionaries.
 
         Args:
             rows: dictionaries of col_names -> values
         """
-        self._weight_col_to_id: dict[str, str] = {} 
-        self._index_col_to_id: dict[str, str]  = {}
+        self._weight_col_to_id: dict[str, str] = {}
+        self._index_col_to_id: dict[str, str] = {}
         self._id_to_name: dict[str, str] = {}
         self._id_to_cpih_weight: dict[str, float] = {}
         # _id_to_cpih_time_series is a defaultdict(dict) to facilitate easy access
@@ -50,26 +51,27 @@ class Transformer:
         for col in column_names:
             parts = col.split(" ", 3)
             if len(parts) < 4 or parts[0] != "CPIH":
-                continue # skip irrevelant (not CPIH weight or index) columns
+                continue  # skip irrevelant (not CPIH weight or index) columns
             type_, id_, name = parts[1:]
             if type_ == "INDEX":
                 self._index_col_to_id[col] = id_
             elif type_ == "WEIGHTS":
                 self._weight_col_to_id[col] = id_
-                self._id_to_name[id_] = name.title() # could move this in the above "if" block too.
+                self._id_to_name[id_] = name.title()
+                # ^ could move this in the above "if" block too.
 
-    def _process_row(self, row: dict[str,str]) -> None:
-        """Process row information and add entries to _id_to_cpih* dicts 
-        
+    def _process_row(self, row: dict[str, str]) -> None:
+        """Process row information and add entries to _id_to_cpih* dicts
+
         Args:
             row: dictionary of col_names -> row values
         """
         row_date = row["Title"]
 
-        # We want the CPIH indices from the "YYYY MMM" rows 
+        # We want the CPIH indices from the "YYYY MMM" rows
         if re.fullmatch(r"\d{4} [A-Z]{3}", row_date):
             for col_name, id_ in self._index_col_to_id.items():
-                if row.get(col_name): # CPIH index is not defined for ALL YYYY MMM rows
+                if row.get(col_name):  # CPIH index is not defined for ALL YYYY MMM rows
                     self._id_to_cpih_time_series[id_][row_date] = float(row[col_name])
 
         # The YYYY rows have the CPIH weights. The newest entries are processed last, so
@@ -80,7 +82,7 @@ class Transformer:
                 if row.get(col_name):
                     self._id_to_cpih_weight[id_] = float(row[col_name])
 
-    def _populate_dicts(self, rows: Iterator[dict[str,str]]) -> None:
+    def _populate_dicts(self, rows: Iterator[dict[str, str]]) -> None:
         """Populate internal dicts using inputted CSV rows.
 
         Args:
@@ -95,7 +97,7 @@ class Transformer:
         self._process_row(first_row)
         for row in rows:
             self._process_row(row)
-        
+
     def _is_ancestor(self, target: list[str], candidate: str) -> bool:
         """Helper function which determines if candidate is an ancestor of target.
 
@@ -127,7 +129,7 @@ class Transformer:
             Node of input tree which is the parent of the target.
         """
         for c in node["children"]:
-            if self._is_ancestor(target_part_ids, c["id"]) :
+            if self._is_ancestor(target_part_ids, c["id"]):
                 return self._traverse_and_find_parent(target_part_ids, c)
         # if none of the children were ancestors, current node must be the parent.
         return node
@@ -140,11 +142,13 @@ class Transformer:
         Returns:
             String representation of JSON dump of the hierarchical dictionary of CPIH info.
         """
-        dummy_root = { "children": [] }
+        dummy_root = {"children": []}
 
         # we sort to ensure BFS traversal. This is necessary for the
         # assumption _is_ancestor (called by _traverse_and_find_parent) makes.
-        for id_ in sorted(self._id_to_name.keys(), key=lambda key_: len(key_.split("."))):
+        for id_ in sorted(
+            self._id_to_name.keys(), key=lambda key_: len(key_.split("."))
+        ):
             parent = self._traverse_and_find_parent(id_.split("."), dummy_root)
 
             new_node = {
@@ -152,10 +156,10 @@ class Transformer:
                 "name": self._id_to_name[id_],
                 "weight": self._id_to_cpih_weight[id_],
                 "values": self._id_to_cpih_time_series[id_],
-                "children": []
+                "children": [],
             }
             parent["children"].append(new_node)
-        
+
         # replace dummy root node with real root node (id: "00")
         root = dummy_root["children"][0]
 
