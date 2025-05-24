@@ -155,7 +155,7 @@ class Transformer:
                 "id": id_,
                 "name": self._id_to_name[id_],
                 "weight": self._id_to_cpih_weight[id_],
-                "values": self._id_to_cpih_time_series[id_],
+                "indices": self._id_to_cpih_time_series[id_],
                 "children": [],
             }
             parent["children"].append(new_node)
