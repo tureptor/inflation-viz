@@ -1,7 +1,7 @@
-from collections import defaultdict
-import re
-from typing import Iterator
 import json
+import re
+from collections import defaultdict
+from typing import Iterator
 
 
 class Transformer:
