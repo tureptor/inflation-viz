@@ -6,7 +6,7 @@ from cpihcsv2json.fetcher import fetch_csv
 def main():
     raw_stream = fetch_csv()
     cleaned_csv = parse_csv(raw_stream)
-    print(Transformer().run(cleaned_csv))
+    print(Transformer(cleaned_csv).to_json())
 
 
 if __name__ == "__main__":

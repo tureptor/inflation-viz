@@ -2,7 +2,7 @@ import csv
 from typing import Iterator
 
 # some column names in the raw csv have typos/are inconsistent
-CORRECTIONS_DICT: dict[str,str] = {
+_CORRECTIONS_DICT: dict[str,str] = {
         "CPIH INDEX 00: ALL ITEMS 2015=100": 
             "CPIH INDEX 00 : ALL ITEMS 2015=100",
         "CPIH INDEX 02:ALCOHOLIC BEVERAGES,TOBACCO & NARCOTICS 2015=100":
@@ -21,16 +21,15 @@ CORRECTIONS_DICT: dict[str,str] = {
             "CPIH WEIGHTS 09.2.1/2/3 : Major durables for in/outdoor recreation and their maintenance",
         "CPIH WEIGHTS 11.2. : Accommodation services":
             "CPIH WEIGHTS 11.2 : Accommodation services",
-    }
+}
 
 def parse_csv(lines: Iterator[str]) -> Iterator[dict[str,str]]:
-    """
-    Parse CSV lines into dictionaries with cleaned column names.
+    """Parse CSV rows into dictionaries with cleaned column names.
     Args:
-        lines (Iterator[str]): An iterator over CSV lines, where the first line
+        lines: An iterator over CSV lines, where the first line
             is the header row.
     Yields:
-        dict[str,str]: Each CSV row as a dictionary with cleaned column names.
+        Each CSV row as a dictionary of cleaned column names -> corresponding values for that row.
     """
     
     header = next(lines)
@@ -41,15 +40,14 @@ def parse_csv(lines: Iterator[str]) -> Iterator[dict[str,str]]:
         yield row
 
 def clean_col_names(col_names: list[str]) -> list[str]:
-    """
-    Correct inconsistent entries in a list of column names
+    """Correct inconsistent entries in a list of column names
     Args:
-        col_names (list[str]): List of original column names.
+        col_names: List of original column names.
     Returns:
-        list[str]: List of cleaned column names.
+        List of cleaned column names.
     """
     return [
-        CORRECTIONS_DICT
+        _CORRECTIONS_DICT
             .get(col, col)
             .replace(": ", "")
         for col in col_names
