@@ -12,5 +12,5 @@ Might want to `> example.json` for now.
 
 ## Development
 
-`uvx ruff check`
+`uvx ruff check`  
 `uvx ruff format .`
