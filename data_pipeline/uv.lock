@@ -34,7 +34,7 @@ wheels = [
 ]
 
 [[package]]
-name = "cpihcsv2json"
+name = "cpih-json-exporter"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

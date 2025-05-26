@@ -1,5 +1,5 @@
 [project]
-name = "cpihcsv2json"
+name = "cpih-json-exporter"
 version = "0.1.0"
 description = "Fetches ONS MM23 dataset csv, then parses it and generates a hierarchical JSON with CPIH indices and weights"
 readme = "README.md"
