@@ -1,6 +1,6 @@
-from cpihcsv2json.fetcher import fetch_csv
-from cpihcsv2json.parser import parse_csv
-from cpihcsv2json.transformer import Transformer
+from cpih_json_exporter.fetcher import fetch_csv
+from cpih_json_exporter.parser import parse_csv
+from cpih_json_exporter.transformer import Transformer
 
 
 def main():
