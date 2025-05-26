@@ -1,15 +1,15 @@
 import json
 import re
 from collections import defaultdict
-from typing import Iterator
+from collections.abc import Iterator
 
 
 class Transformer:
     """Given the cleaned CSV rows as input, transform it into a hierarchical JSON.
 
     Attributes:
-        _weight_col_to_id (dict[str, str]): map a CPIH weight column name ("CPIH WEIGHTS 09.4.1.1 Recre...")
-            to a classification ID ("09.4.1.1")
+        _weight_col_to_id (dict[str, str]): map a CPIH weight column name
+            ("CPIH WEIGHTS 09.4.1.1 Recre...") to a classification ID ("09.4.1.1")
         _index_col_to_id (dict[str, str]): map a CPIH index column name ("CPIH INDEX 06.2....")
             to a classification ID ("06.2")
         _id_to_name (dict[str, str]):  map a classification ID ("01.1.1")
@@ -114,7 +114,7 @@ class Transformer:
         if candidate == "00":
             return True
         # .split("/") is necessary since e.g. "9.2.1.3" is a descendant of "9.2/3"
-        return all(t in c.split("/") for t, c in zip(target, candidate.split(".")))
+        return all(t in c.split("/") for t, c in zip(target, candidate.split("."), strict=False))
 
     def _traverse_and_find_parent(self, target_part_ids: list[str], node: dict) -> dict:
         """Helper DFS function - finds the parent node for target id within the tree "node".
@@ -146,9 +146,7 @@ class Transformer:
 
         # we sort to ensure BFS traversal. This is necessary for the
         # assumption _is_ancestor (called by _traverse_and_find_parent) makes.
-        for id_ in sorted(
-            self._id_to_name.keys(), key=lambda key_: len(key_.split("."))
-        ):
+        for id_ in sorted(self._id_to_name.keys(), key=lambda key_: len(key_.split("."))):
             parent = self._traverse_and_find_parent(id_.split("."), dummy_root)
 
             new_node = {

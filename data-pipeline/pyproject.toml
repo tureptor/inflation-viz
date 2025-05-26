@@ -8,3 +8,28 @@ dependencies = [
     "requests>=2.32.3",
     "boto3>=1.38.23",
 ]
+
+[tool.ruff]
+line-length = 100
+fix = true
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+unfixable = []
+
+select = [
+  "E",      # pycodestyle (formatting)
+  "F",      # pyflakes (errors)
+  "B",      # bugbear (likely bugs)
+  "I",      # isort (imports)
+  "UP",     # pyupgrade (modern syntax)
+  "SIM",    # simplify (useless `if`, double negations, etc.)
+  "C4",     # comprehensions
+  "TID",    # tidy imports
+]
+
+# Exclude test/data/venv dirs
+exclude = [
+  ".venv",
+  "__pycache__",
+]
