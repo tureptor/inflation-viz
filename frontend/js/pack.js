@@ -1,5 +1,5 @@
 // based on https://observablehq.com/@d3/zoomable-circle-packing
-export const pack = (parent, props) => {
+export function pack(parent, props) {
   const {
     data, // nested objects
     z,
@@ -10,9 +10,13 @@ export const pack = (parent, props) => {
   } = props;
 
   // ***** 1 - SETUP DIMENSIONS AND HIERARCHY *****
-  const margin = 70;
-  const width = +parent.attr('width') - margin;
+   const margin = 0;
+  /*const width = +parent.attr('width') - margin;
   const height = +parent.attr('height') - margin;
+ */
+  const container = document.getElementById('circlepack-container');
+  const width = Math.min(container.clientWidth, container.clientHeight);
+  const height = width;
 
   const root = d3.pack()
     .size([width, height])
@@ -23,12 +27,9 @@ export const pack = (parent, props) => {
 
   // ***** 2 - SETUP FOCUS AND VIEW *****
 
-  // case 1 - (most of the time) - internal node - keep as is
-  // case 2 - leaf node (no children) - focus parent
-  // case 3 - null - either initial load or user just clicked on node that is already focused - focus root
-  const focusedNode = startNode
-    ? (startNode.children ? startNode : startNode.parent)
-    : root;
+  // case 1 - non null - keep as is
+  // case 2 - null - either initial load or user just clicked on node that is already focused - focus root
+  const focusedNode = startNode || root;
 
   const view = [focusedNode.x, focusedNode.y, focusedNode.r * 2];
   const prevView = parent.property('view') || view; // second case only true upon initial load
@@ -134,7 +135,9 @@ export const pack = (parent, props) => {
   // ***** 7 - HANDLE (CIRCLE) MOUSE EVENTS *****
 
   function handleMouseOver(event, d) {
-    d3.select(event.target).attr("stroke-width", 1);
+    d3.select(event.target)
+      .attr("stroke-width", 1)
+      .style('filter', 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.83))')
     d3.select('#tooltip')
       .style('display', 'block')
       .style('left', (event.pageX + 15) + 'px')
@@ -154,8 +157,10 @@ export const pack = (parent, props) => {
     });
   }
 
-  function handleMouseOut() {
-    d3.select(this).attr("stroke-width", 0.1);
+  function handleMouseOut(event) {
+    d3.select(event.target)
+      .attr("stroke-width", 0.1)
+      .style('filter', 'none');
     d3.select('#tooltip').style('display', 'none');
   }
 
