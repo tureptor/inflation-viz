@@ -1,6 +1,14 @@
 resource "aws_s3_bucket" "frontend-data" {
   bucket        = "inflation-viz-frontend-data-${random_id.suffix.hex}"
   force_destroy = true
+
+  tags = merge(
+    local.common_tags,
+    {
+      Name    = "inflation-viz-s3"
+      Purpose = "Store frontend data"
+    }
+  )
 }
 
 resource "random_id" "suffix" {
@@ -28,10 +36,10 @@ resource "aws_s3_bucket_policy" "public_read" {
         Sid       = "PublicReadGetObject",
         Effect    = "Allow",
         Principal = "*",
-        Action    = [
+        Action = [
           "s3:GetObject"
         ],
-        Resource  = "${aws_s3_bucket.frontend-data.arn}/*"
+        Resource = "${aws_s3_bucket.frontend-data.arn}/*"
       }
     ]
   })
