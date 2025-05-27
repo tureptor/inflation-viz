@@ -10,5 +10,6 @@ def main():
     json_str = Transformer(cleaned_csv).to_json()
     upload_to_s3(json_str)
 
+
 if __name__ == "__main__":
     main()
