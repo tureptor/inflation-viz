@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UK Inflation Viz</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <div id="controls">
+        <label for="start-month">Start:</label>
+        <select id="start-month"></select>
+        <select id="start-year"></select>
+
+        <label for="end-month">End:</label>
+        <select id="end-month"></select>
+        <select id="end-year"></select>
+      </div>
+
+    <div id="viz-container" style="display: flex; width: 100vw; height: 97vh;">
+      
+
+      <div id="circlepack-container" style="flex: 0 0 60%; position: relative;">
+        <svg id="circlepack" style="width: 100%; height: 100%;"></svg>
+      </div>
+      <div id="linechart-container" style="flex: 0 0 40%; position: relative;">
+        <svg id="linechart" style="width: 100%; height: 100%;"></svg>
+      </div>
+    </div>  
+    <div id="tooltip"></div>
+    <div id="chart-tooltip"></div>
+
+    <script src="index.js" type="module"></script>
+  </body>
+</html>
