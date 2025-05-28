@@ -11,3 +11,9 @@ variable "owner" {
   type    = string
   default = "mansoor"
 }
+
+variable "domain_name" {
+  description = "Custom domain name for the site"
+  type        = string
+  default     = "whathappenedtoprices.org"
+}
