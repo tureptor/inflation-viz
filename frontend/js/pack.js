@@ -27,9 +27,10 @@ export function pack(parent, props) {
 
   // ***** 2 - SETUP FOCUS AND VIEW *****
 
-  // case 1 - non null - keep as is
-  // case 2 - null - either initial load or user just clicked on node that is already focused - focus root
-  const focusedNode = startNode || root;
+  if (!startNode) {
+    clickHandler(root);
+  }
+  const focusedNode = startNode;
 
   const view = [focusedNode.x, focusedNode.y, focusedNode.r * 2];
   const prevView = parent.property('view') || view; // second case only true upon initial load
