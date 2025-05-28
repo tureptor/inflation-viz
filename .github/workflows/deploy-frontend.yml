@@ -1,0 +1,52 @@
+name: Deploy Frontend to S3 by Tag Lookup
+
+on:
+  push:
+    paths:
+      - 'frontend/**'
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - name: Lookup S3 bucket by tag
+      id: lookup_bucket
+      env:
+        AWS_REGION: eu-west-2
+      run: |
+        bucket_arn=$(aws resourcegroupstaggingapi get-resources \
+          --tag-filters Key=Name,Values=inflation-viz-s3 \
+          --resource-type-filters s3 \
+          --query 'ResourceTagMappingList[0].ResourceARN' \
+          --output text)
+
+        if [ -z "$bucket_arn" ] || [ "$bucket_arn" == "None" ]; then
+          echo "No bucket found with specified tag"
+          exit 1
+        fi
+
+        # ARN format: arn:aws:s3:::bucket-name
+        bucket_name=${bucket_arn#arn:aws:s3:::}
+        echo "Found bucket: $bucket_name"
+
+        # Set output for next steps
+        echo "bucket_name=$bucket_name" >> $GITHUB_OUTPUT
+
+    - name: Sync frontend to S3 bucket
+      run: |
+        aws s3 sync frontend/ s3://$BUCKET_NAME/
+      env:
+        BUCKET_NAME: ${{ steps.lookup_bucket.outputs.bucket_name }}
