@@ -145,7 +145,7 @@ export function pack(parent, props) {
       .html(`
         <div class="tooltip-title">${d.data.name}</div>
         <div><i>This makes up <b>${d3.format(".2~%")(d.value / 1000)}</b> of the total CPIH</i></div>
-        <div>Change: <b>${d3.format("+.0%")(z(d)[1] - 1)}</b> (Annualized: <b>${d3.format("+.0%")(z(d)[0] - 1)}</b>)</div>
+        <div>Change: <b>${d3.format("+.0%")(z(d)[1] - 1)}</b> (Annualised: <b>${d3.format("+.0%")(z(d)[0] - 1)}</b>)</div>
       `);
   }
 
