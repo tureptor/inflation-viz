@@ -8,7 +8,7 @@ html, body {
 }
 
 #circlepack > g > text {
-  font-size: 10px;
+  font-size: 14px;
   text-shadow: -2px -2px 4px #FFF, -2px 2px 4px #FFF, 2px -2px 4px #FFF, 2px 2px 4px #FFF;
 }
 
@@ -28,7 +28,7 @@ html, body {
 }
 .tooltip-title {
   color: #000;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   overflow: hidden;
 }
