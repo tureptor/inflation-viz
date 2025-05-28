@@ -20,6 +20,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = "s3-origin"
     viewer_protocol_policy = "redirect-to-https"
+    compress               = true
 
     cache_policy_id = aws_cloudfront_cache_policy.enable_compression_policy.id
   }
@@ -37,15 +38,21 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   aliases = [var.domain_name]
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    {
+      Name    = "inflation-viz-cloudfront-distribution"
+      Purpose = "Cloudfront distribution for inflation-viz"
+    }
+  )
 }
 
 resource "aws_cloudfront_cache_policy" "enable_compression_policy" {
   name = "enable_compression_policy"
 
-  min_ttl     = 300       # 5 minutes
-  default_ttl = 86400     # 1 day
-  max_ttl     = 2592000   # 30 days
+  min_ttl     = 300     # 5 minutes
+  default_ttl = 86400   # 1 day
+  max_ttl     = 2592000 # 30 days
 
   parameters_in_cache_key_and_forwarded_to_origin {
     cookies_config {
