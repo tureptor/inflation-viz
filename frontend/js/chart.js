@@ -5,7 +5,7 @@ export function drawLineChart(data, elementId) {
     const height = container.clientHeight;
 
     const parseTime = d3.timeParse("%Y %b");
-
+    
     const series = Object.entries(data.indices)
         .map(([key, value]) => ({
             date: parseTime(key),
@@ -150,24 +150,26 @@ export function drawLineChart(data, elementId) {
         .attr("r", 0)
         .attr("fill", "steelblue")
         .on("mousemove", (event, d) => {
-            const tooltipWidth = 100;
-            const padding = 20;
+            d3.select(event.currentTarget).attr("fill", "orange").attr("r", 6);
+            requestAnimationFrame(() => {
+            const tooltipWidth = 120;
+            const padding = 15;
             const pageWidth = window.innerWidth;
 
             let x = event.pageX + padding;
-            const y = event.pageY - 28;
+            const y = event.pageY + padding;
 
             // Clamp to the left if overflowing to the right
-            if (x + tooltipWidth > pageWidth - 25) {
-                x = event.pageX - tooltipWidth - padding;
+            if (x + tooltipWidth > pageWidth - padding) {
+                x = event.pageX - tooltipWidth + padding;
             }
             tooltip
                 .style('display', 'block')
                 .html(`<strong>${d3.timeFormat("%Y %b")(d.date)}</strong><br/>Value: ${d.value.toFixed(2)}`)
                 .style("left", `${x}px`)
                 .style("top", `${y}px`);
-            d3.select(event.currentTarget).attr("fill", "orange").attr("r", 6);
-        })
+            
+        })})
         .on("mouseleave", (event) => {
             tooltip.style('display', 'none');
             d3.select(event.currentTarget).attr("fill", "steelblue").attr("r", 4);

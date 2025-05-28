@@ -4,7 +4,7 @@ export function pack(parent, props) {
     data, // nested objects
     z,
     color,
-    startNode,
+    startNodeName,
     clickHandler,
     value, // given a node d, returns a quantitative value (for area encoding; null for count)
   } = props;
@@ -26,11 +26,7 @@ export function pack(parent, props) {
       .sort((a, b) => b.value - a.value));
 
   // ***** 2 - SETUP FOCUS AND VIEW *****
-
-  if (!startNode) {
-    clickHandler(root);
-  }
-  const focusedNode = startNode;
+  const focusedNode = root.find(d => d.data.name === startNodeName);
 
   const view = [focusedNode.x, focusedNode.y, focusedNode.r * 2];
   const prevView = parent.property('view') || view; // second case only true upon initial load
@@ -135,26 +131,34 @@ export function pack(parent, props) {
 
   // ***** 7 - HANDLE (CIRCLE) MOUSE EVENTS *****
 
-  function handleMouseOver(event, d) {
+  function handleMouseOver(event) {
     d3.select(event.target)
       .attr("stroke-width", 1)
       .style('filter', 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.83))')
     d3.select('#tooltip')
       .style('display', 'block')
-      .style('left', (event.pageX + 15) + 'px')
-      .style('top', (event.pageY + 15) + 'px')
-      .html(`
-        <div class="tooltip-title">${d.data.name}</div>
-        <div><i>This makes up <b>${d3.format(".2~%")(d.value / 1000)}</b> of the total CPIH</i></div>
-        <div>Change: <b>${d3.format("+.0%")(z(d)[1] - 1)}</b> (Annualised: <b>${d3.format("+.0%")(z(d)[0] - 1)}</b>)</div>
-      `);
+
   }
 
-  function handleMouseMove(event) {
+  function handleMouseMove(event, d) {
     requestAnimationFrame(() => {
+      const tooltipHeight = 80;
+      const padding = 15;
+      const x = event.pageX + padding;
+      let y = event.pageY + padding;
+
+      // Clamp above if overflowing to the bottom
+      if (y + tooltipHeight > window.innerHeight) {
+        y = event.pageY - tooltipHeight + padding
+      }
       d3.select('#tooltip')
-        .style('left', (event.pageX + 15) + 'px')
-        .style('top', (event.pageY + 15) + 'px');
+        .style('left', x + 'px')
+        .style('top', y + 'px')
+        .html(`
+          <div class="tooltip-title">${d.data.name}</div>
+          <div><i>This makes up <b>${d3.format(".2~%")(d.value / 1000)}</b> of the total CPIH</i></div>
+          <div>Change: <b>${d3.format("+.0%")(z(d)[1] - 1)}</b> (Annualised: <b>${d3.format("+.0%")(z(d)[0] - 1)}</b>)</div>
+        `);
     });
   }
 

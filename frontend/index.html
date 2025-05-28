@@ -1,34 +1,57 @@
 <!DOCTYPE html>
+<meta charset="UTF-8" />
 <html>
-  <head>
-    <title>UK Inflation Viz</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-  </head>
-  <body>
+
+<head>
+  <title>UK Inflation Viz</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+  <div id="header">
+    <div id="description">
+      <h1>
+        UK Inflation Visualisation
+        <span id="info-icon">ⓘ
+          <div id="info-tooltip">
+            <p>Explore how inflation (CPIH) in the UK has changed over time across various categories.</p>
+            <p>Red indicates rising prices, blue indicates falling prices.</p>
+            <p>Use the date selectors to choose a time range, and the search bar to quickly find a category.</p>
+            <p>Click circles to zoom in - click again on the current circle to zoom back out.</p>
+          </div>
+        </span>
+      </h1>
+    </div>
+
     <div id="controls">
-        <label for="start-month">Start:</label>
-        <select id="start-month"></select>
-        <select id="start-year"></select>
+      <label for="start-month">Start:</label>
+      <select id="start-month"></select>
+      <select id="start-year"></select>
 
-        <label for="end-month">End:</label>
-        <select id="end-month"></select>
-        <select id="end-year"></select>
-      </div>
+      <label for="end-month">End:</label>
+      <select id="end-month"></select>
+      <select id="end-year"></select>
 
-    <div id="viz-container" style="display: flex; width: 100vw; height: 97vh;">
-      
+      <label for="search-by-name">Search by name:</label>
+      <input type="text" id="search-by-name" autocomplete="on" list="suggestions" />
+      <datalist id="suggestions" />
+    </div>
+  </div>
 
-      <div id="circlepack-container" style="flex: 0 0 60%; position: relative;">
-        <svg id="circlepack" style="width: 100%; height: 100%;"></svg>
-      </div>
-      <div id="linechart-container" style="flex: 0 0 40%; position: relative;">
-        <svg id="linechart" style="width: 100%; height: 100%;"></svg>
-      </div>
-    </div>  
-    <div id="tooltip"></div>
-    <div id="chart-tooltip"></div>
+  <div id="viz-container">
+    <div id="circlepack-container" style="flex: 0 0 60%; position: relative;">
+      <svg id="circlepack" style="width: 100%; height: 100%;"></svg>
+    </div>
+    <div id="linechart-container" style="flex: 0 0 40%; position: relative;">
+      <svg id="linechart" style="width: 100%; height: 100%;"></svg>
+    </div>
+  </div>
 
-    <script src="index.js" type="module"></script>
-  </body>
+  <div id="tooltip"></div>
+  <div id="chart-tooltip"></div>
+
+  <script src="index.js" type="module"></script>
+</body>
+
 </html>

@@ -1,6 +1,6 @@
 import { pack } from './js/pack.js';
 import { drawLineChart } from './js/chart.js';
-import { setupSelectors, getDateRange, getMonthsDiff, setEndDateFromString } from './js/selectors.js';
+import { setupSelectors, getDateRange, getMonthsDiff, setEndDateFromString, getSelectedItem } from './js/selectors.js';
 
 
 const packContainer = d3.select('#circlepack');
@@ -14,10 +14,10 @@ packContainer.attr("height", window.innerHeight - margin);
 
 // these store loaded data
 let data;
-let flattenedData = [];
+let flattenedData = {};
 
 // state variables
-let focusedNode;  // stores circle node that has most recently been clicked
+let focusedNodeName = "Overall Index";  // stores circle node that has most recently been clicked
 let startDate = "2015 JAN";
 let endDate = "2025 APR";
 
@@ -29,11 +29,18 @@ function updateDateRange() {
   updateVis();
 }
 
+function updateSelectedNode() {
+  let selection = getSelectedItem();
+  if (selection in flattenedData) {
+    focusedNodeName = selection;
+    updateVis();
+  }
+}
+
 const circleClickHandler = (node) => {
-  const userClickedAlreadyFocusedNode = focusedNode && node.data.name == focusedNode.data.name;
-  focusedNode = userClickedAlreadyFocusedNode ? null : node;
+  const userClickedAlreadyfocusedNodeName = focusedNodeName == node.data.name;
+  focusedNodeName = userClickedAlreadyfocusedNodeName ? "Overall Index" : node.data.name;
   // null simulates initial page load and will zoom all the way out
-  console.log(node);
   updateVis();
 }
 
@@ -53,8 +60,11 @@ const z = accessor => d => {
 function color() {
   const pLow = 5;
   const pHigh = 95;
-  // Step 1: Apply func to each object
-  const values = flattenedData.map(x => z(d => d.indices)(x)[0]).sort((a, b) => a - b);
+
+  // compute change for each node. we set colour range based off pLow and pHigh of changes
+  const values = Object.values(flattenedData)
+    .map(x => z(d => d.indices)(x)[0])
+    .sort((a, b) => a - b);
   const n = values.length;
 
   // Helper to get percentile value by linear interpolation
@@ -75,18 +85,18 @@ const updateVis = () => {
     data: data,
     color: color(),
     z: z(d => d.data.indices),
-    startNode: focusedNode,
+    startNodeName: focusedNodeName,
     clickHandler: circleClickHandler,
     value: d => d.children.length === 0 ? d.weight : 0, // the d3 hierarchy sum computes 
     // the sum of all descendants plus the actual node's value
     // this leads us to inaccurate results, so this conditional turns it into 
     // the layout it expects ("only leaves have non-zero value")
   });
-  drawLineChart(focusedNode && focusedNode.data || data, "linechart");
+  drawLineChart(flattenedData[focusedNodeName], "linechart");
 };
 
 function recurse(node) {
-  flattenedData.push(node);
+  flattenedData[node.name] = node;
   for (const child of node.children) {
     recurse(child);
   }
@@ -99,7 +109,7 @@ d3.json('./data/cpih.json')
     recurse(data);
 
     const latestDate = Object.keys(data.indices).at(-1);
-    setupSelectors(updateDateRange, 2015, +latestDate.split(' ')[0])
+    setupSelectors(updateDateRange, updateSelectedNode, 2015, +latestDate.split(' ')[0], Object.keys(flattenedData))
     setEndDateFromString(latestDate)
 
     updateVis()

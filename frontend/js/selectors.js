@@ -1,9 +1,9 @@
-export function setupSelectors(onChangeCallback, minYear = 2015, maxYear) {
-    const months = [
+const months = [
         'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
         'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
     ];
 
+export function setupSelectors(onDateChangeCallback, onSelectChangeCallback, minYear = 2015, maxYear, options) {
     // Populate month selectors
     months.forEach((month, i) => {
         ['start-month', 'end-month'].forEach(id => {
@@ -24,17 +24,27 @@ export function setupSelectors(onChangeCallback, minYear = 2015, maxYear) {
         });
     }
 
+    // populate datalist
+    const input = document.getElementById('search-by-name');
+    const datalist = document.getElementById('suggestions');
+
+    options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt;
+        datalist.appendChild(option);
+    });
+
+    // Handle input/select event
     // Hook up listeners
     ['start-month', 'start-year', 'end-month', 'end-year'].forEach(id => {
-        document.getElementById(id).addEventListener('change', () => onChangeCallback(getDateRange()));
+        document.getElementById(id).addEventListener('change', onDateChangeCallback);
     });
+
+    input.addEventListener('change', onSelectChangeCallback);
 }
 
 // Helper to get the selected date range
 export function getDateRange() {
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-        'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-
     const sM = +document.getElementById('start-month').value;
     const sY = +document.getElementById('start-year').value;
     const eM = +document.getElementById('end-month').value;
@@ -63,7 +73,7 @@ export function setEndDateFromString(dateStr) {
     };
 
     const year = +yearStr;
-    const month = monthMap[monthStr.toUpperCase()];
+    const month = monthMap[monthStr];
 
     if (isNaN(year) || month === undefined) {
         console.warn('Invalid date string format:', dateStr);
@@ -72,4 +82,8 @@ export function setEndDateFromString(dateStr) {
 
     document.getElementById('end-year').value = year;
     document.getElementById('end-month').value = month;
+}
+
+export function getSelectedItem() {
+    return document.getElementById('search-by-name').value;
 }
