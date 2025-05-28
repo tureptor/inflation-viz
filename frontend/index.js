@@ -1,4 +1,4 @@
-import { pack }  from './js/pack.js';
+import { pack } from './js/pack.js';
 import { drawLineChart } from './js/chart.js';
 import { setupSelectors, getDateRange, getMonthsDiff, setEndDateFromString } from './js/selectors.js';
 
@@ -10,7 +10,7 @@ packContainer.attr("width", window.innerHeight - margin);
 packContainer.attr("height", window.innerHeight - margin);
 
 
-setupSelectors(updateDateRange)
+
 
 // these store loaded data
 let data;
@@ -18,16 +18,14 @@ let flattenedData = [];
 
 // state variables
 let focusedNode;  // stores circle node that has most recently been clicked
-let startDate="2015 JAN";
-let endDate="2025 APR";
+let startDate = "2015 JAN";
+let endDate = "2025 APR";
 
 
 function updateDateRange() {
   const { startStr, endStr } = getDateRange();
-  console.log(startStr, endStr)
   startDate = startStr;
   endDate = endStr;
-  console.log(startDate, endDate);
   updateVis();
 }
 
@@ -46,7 +44,7 @@ const z = accessor => d => {
   }
   let absoluteChange = accessor(d)[endDate] / accessor(d)[startDate];
   // TODO - allow switch from absolute to annualised change
-  return true ? Math.pow(absoluteChange, 12/getMonthsDiff()) : absoluteChange;
+  return [Math.pow(absoluteChange, 12 / getMonthsDiff()), absoluteChange];
 }
 
 // diverging colour scale
@@ -56,7 +54,7 @@ function color() {
   const pLow = 5;
   const pHigh = 95;
   // Step 1: Apply func to each object
-  const values = flattenedData.map(z(d => d.indices)).sort((a, b) => a - b);
+  const values = flattenedData.map(x => z(d => d.indices)(x)[0]).sort((a, b) => a - b);
   const n = values.length;
 
   // Helper to get percentile value by linear interpolation
@@ -69,14 +67,14 @@ function color() {
     return values[lower] + (values[upper] - values[lower]) * (rank - lower);
   }
   return d3.scaleDiverging(t => d3.interpolateRdBu(1 - t))
-                .domain([Math.min(0.95,percentile(pLow)), 1, Math.max(1.05,percentile(pHigh))]);
+    .domain([Math.min(0.95, percentile(pLow)), 1, Math.max(1.05, percentile(pHigh))]);
 }
 
 const updateVis = () => {
   packContainer.call(pack, {
     data: data,
     color: color(),
-    z: z(d => d.data.indices), 
+    z: z(d => d.data.indices),
     startNode: focusedNode,
     clickHandler: circleClickHandler,
     value: d => d.children.length === 0 ? d.weight : 0, // the d3 hierarchy sum computes 
@@ -88,17 +86,21 @@ const updateVis = () => {
 };
 
 function recurse(node) {
-    flattenedData.push(node);
-    for (const child of node.children) {
-        recurse(child);
-    }
+  flattenedData.push(node);
+  for (const child of node.children) {
+    recurse(child);
   }
+}
 
 // Load data and visualise tree
 d3.json('./data/cpih.json')
   .then(file => {
     data = file;
     recurse(data);
-    setEndDateFromString(Object.keys(data.indices).at(-1))
+
+    const latestDate = Object.keys(data.indices).at(-1);
+    setupSelectors(updateDateRange, 2015, +latestDate.split(' ')[0])
+    setEndDateFromString(latestDate)
+
     updateVis()
-});
+  });

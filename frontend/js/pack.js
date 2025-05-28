@@ -10,7 +10,7 @@ export function pack(parent, props) {
   } = props;
 
   // ***** 1 - SETUP DIMENSIONS AND HIERARCHY *****
-   const margin = 0;
+  const margin = 0;
   /*const width = +parent.attr('width') - margin;
   const height = +parent.attr('height') - margin;
  */
@@ -21,9 +21,9 @@ export function pack(parent, props) {
   const root = d3.pack()
     .size([width, height])
     .padding(0)
-  (d3.hierarchy(data)
-    .sum(value)
-    .sort((a, b) => b.value - a.value));
+    (d3.hierarchy(data)
+      .sum(value)
+      .sort((a, b) => b.value - a.value));
 
   // ***** 2 - SETUP FOCUS AND VIEW *****
 
@@ -41,7 +41,7 @@ export function pack(parent, props) {
   // get translation co-ords for a given node.
   const translateCoordsPrev = d => `translate(${(d.x - prevView[0]) * kPrev},${(d.y - prevView[1]) * kPrev})`;
   const translateCoordsNew = d => `translate(${(d.x - view[0]) * kNew},${(d.y - view[1]) * kNew})`;
- 
+
   const transitionDuration = 600;
 
   // ***** 3 - SETUP PARENT SVG *****
@@ -72,14 +72,14 @@ export function pack(parent, props) {
   const nodes = root.descendants();
 
   // ***** 5 - DRAW CIRCLES *****
-    
+
   const circles = circlesG.selectAll("circle")
     .data(nodes, d => d.data.id);
 
   circles.join(
     enter => enter.append("circle")
       .attr("transform", translateCoordsPrev)
-      .attr("fill", d => color(z(d)))
+      .attr("fill", d => color(z(d)[0]))
       .attr("r", d => d.r * kPrev)
       .on("mouseover", handleMouseOver)
       .on("mousemove", handleMouseMove)
@@ -90,7 +90,7 @@ export function pack(parent, props) {
       .call(update => update.transition().duration(transitionDuration)
         .attr("transform", translateCoordsNew)
         .attr("r", d => d.r * kNew)
-        .attr("fill", d => color(z(d)))
+        .attr("fill", d => color(z(d)[0]))
       ),
 
     exit => exit.remove() // circles are never removed so this doesnt matter
@@ -145,7 +145,7 @@ export function pack(parent, props) {
       .html(`
         <div class="tooltip-title">${d.data.name}</div>
         <div><i>This makes up <b>${d3.format(".2~%")(d.value / 1000)}</b> of the total CPIH</i></div>
-        <div>Change: <b>${d3.format("+.0%")(z(d) - 1)}</b></div>
+        <div>Change: <b>${d3.format("+.0%")(z(d)[1] - 1)}</b> (Annualized: <b>${d3.format("+.0%")(z(d)[0] - 1)}</b>)</div>
       `);
   }
 

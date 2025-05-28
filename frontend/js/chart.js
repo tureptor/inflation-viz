@@ -2,7 +2,7 @@ export function drawLineChart(data, elementId) {
 
     const container = document.getElementById('linechart-container');
     const width = container.clientWidth;
-    const height =  container.clientHeight;
+    const height = container.clientHeight;
 
     const parseTime = d3.timeParse("%Y %b");
 
@@ -13,9 +13,6 @@ export function drawLineChart(data, elementId) {
         }))
         .sort((a, b) => a.date - b.date);
 
-    console.log(data);
-
-    
 
     const margin = { top: 20, right: 30, bottom: 40, left: 50 };
     const innerWidth = width - margin.left - margin.right;
@@ -28,25 +25,25 @@ export function drawLineChart(data, elementId) {
     // Chart title
     const title = svg.selectAll(".chart-title").data([null]);
     title.join(
-    enter => enter.append("text")
-        .attr("class", "chart-title")
-        .attr("x", width / 2)
-        .attr("y", 30)
-        .attr("text-anchor", "middle")
-        .text(data.name),
-    update => update.text(data.name)
+        enter => enter.append("text")
+            .attr("class", "chart-title")
+            .attr("x", width / 2)
+            .attr("y", 30)
+            .attr("text-anchor", "middle")
+            .text(data.name),
+        update => update.text(data.name)
     );
 
     // Y-axis label
     const yLabel = svg.selectAll(".y-axis-label").data([null]);
     yLabel.join(
-    enter => enter.append("text")
-        .attr("class", "y-axis-label")
-        .attr("transform", "rotate(-90)")
-        .attr("x", -height / 2)
-        .attr("y", -50)
-        .attr("text-anchor", "middle")
-        .text("CPIH Index")
+        enter => enter.append("text")
+            .attr("class", "y-axis-label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -height / 2)
+            .attr("y", -50)
+            .attr("text-anchor", "middle")
+            .text("CPIH Index")
     );
 
     // Remove old tooltip if any
@@ -68,7 +65,7 @@ export function drawLineChart(data, elementId) {
         .range([0, innerWidth]);
 
     const y = d3.scaleLinear()
-        .domain([0,d3.max(series, d => d.value)])
+        .domain([0, d3.max(series, d => d.value)])
         .nice()
         .range([innerHeight, 0]);
 
@@ -122,7 +119,7 @@ export function drawLineChart(data, elementId) {
             .transition()
             .duration(500)
             .attr("opacity", 1),
- 
+
         exit => exit.remove()
     );
 
