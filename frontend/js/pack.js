@@ -11,9 +11,7 @@ export function pack(parent, props) {
 
 	// ***** 1 - SETUP DIMENSIONS AND HIERARCHY *****
 	const margin = 0;
-	/*const width = +parent.attr('width') - margin;
-  const height = +parent.attr('height') - margin;
- */
+
 	const container = document.getElementById("circlepack-container");
 	const width = Math.min(container.clientWidth, container.clientHeight);
 	const height = width;
@@ -190,4 +188,10 @@ export function pack(parent, props) {
 	function handleClick(_, d) {
 		clickHandler(d);
 	}
+
+	// right click resets zoom
+	parent.on("contextmenu", (event) => {
+		event.preventDefault();
+		clickHandler(focusedNode);
+	});
 }
