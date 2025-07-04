@@ -157,11 +157,15 @@ export function drawLineChart(data, elementId) {
 					.attr("y2", innerHeight)
 					.attr("stroke", "#ddd")
 					.attr("stroke-width", 1)
-					.attr("stroke-dasharray", "2,2"),
+					.attr("stroke-dasharray", "2,2")
+					.attr("opacity", 0)
+					.transition()
+					.duration(750)
+					.attr("opacity", 1),
 			(update) =>
 				update
 					.transition()
-					.duration(500)
+					.duration(750)
 					.attr("x1", (d) => x(d))
 					.attr("x2", (d) => x(d))
 					.attr("y2", innerHeight),
