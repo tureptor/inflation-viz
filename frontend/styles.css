@@ -1,98 +1,105 @@
 /* TODO - review necessity of CSS parameters */
-html, body {
-  display: flex;
-  flex-direction: column;
-  font-family: Arial, sans-serif;
-  overflow: auto;
-  margin: 0;
-  padding: 0;
-  height: 100vh;
+html,
+body {
+	display: flex;
+	flex-direction: column;
+	font-family: Arial, sans-serif;
+	overflow: auto;
+	margin: 0;
+	padding: 0;
+	height: 100vh;
 }
 
 #header {
-  margin-left: 20px;
+	margin-left: 20px;
 }
 
 #description h1 {
-  display: flex;
-  align-items: center;
-  gap: 0.5em; /* Space between title and icon */
-  margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.5em; /* Space between title and icon */
+	margin: 0;
 }
 
 #info-icon {
-  position: relative;
-  font-size: 18px;
-  color: #555;
-  cursor: pointer;
+	position: relative;
+	font-size: 18px;
+	color: #555;
+	cursor: pointer;
 }
 
 #info-tooltip {
-  display: none;
-  position: absolute;
-  top: 24px;
-  left: 0;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-  padding: 12px 16px;
-  width: 280px;
-  font-size: 14px;
-  font-weight: strong;
-  z-index: 999;
+	display: none;
+	position: absolute;
+	top: 24px;
+	left: 0;
+	background: #fff;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+	padding: 12px 16px;
+	width: 280px;
+	font-size: 14px;
+	font-weight: strong;
+	z-index: 999;
 }
 
 #info-icon:hover #info-tooltip {
-  display: block;
+	display: block;
 }
 
 #viz-container {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-    min-height: 0; /* required to prevent overflow in flex containers */
-  margin-bottom: 10px;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	min-height: 0; /* required to prevent overflow in flex containers */
+	margin-bottom: 10px;
+	user-select: none;
 }
 
 #circlepack > g > text {
-  font-size: 14px;
-  text-shadow: -2px -2px 4px #FFF, -2px 2px 4px #FFF, 2px -2px 4px #FFF, 2px 2px 4px #FFF;
+	font-size: 14px;
+	text-shadow:
+		-2px -2px 4px #fff,
+		-2px 2px 4px #fff,
+		2px -2px 4px #fff,
+		2px 2px 4px #fff;
+	pointer-events: none;
 }
 
 #tooltip {
-  position: absolute;
-  display: none;
-  background: #fff;
-  box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
-  border: 1px solid #ddd;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 8px;
-  min-width: 160px;
-  color: #333;
-  opacity: 0.8;
-  overflow: hidden;
+	position: absolute;
+	display: none;
+	background: #fff;
+	box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
+	border: 1px solid #ddd;
+	font-size: 12px;
+	font-weight: 500;
+	padding: 8px;
+	min-width: 160px;
+	color: #333;
+	opacity: 0.8;
+	overflow: hidden;
 }
 .tooltip-title {
-  color: #000;
-  font-size: 13px;
-  font-weight: 600;
-  overflow: hidden;
+	color: #000;
+	font-size: 13px;
+	font-weight: 600;
+	overflow: hidden;
 }
 
 #chart-tooltip {
-  position: absolute;
-  display: none;
-  background: #fff;
-  box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
-  border: 1px solid #ddd;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 8px;
-  min-width: 100px;
-  color: #333;
-  opacity: 0.8;
-  overflow: hidden;
+	position: absolute;
+	display: none;
+	background: #fff;
+	box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
+	border: 1px solid #ddd;
+	font-size: 12px;
+	font-weight: 500;
+	padding: 8px;
+	min-width: 100px;
+	color: #333;
+	opacity: 0.8;
+	overflow: hidden;
 }
