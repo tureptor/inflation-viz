@@ -1,4 +1,5 @@
 import { drawLineChart } from "./js/chart.js";
+import { initTooltipFade } from "./js/info_tooltip.js";
 import { pack } from "./js/pack.js";
 import {
 	getDateRange,
@@ -123,4 +124,8 @@ d3.json("./data/cpih.json").then((file) => {
 	setEndDateFromString(latestDate);
 
 	updateVis();
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+	initTooltipFade("#info-tooltip", "#info-icon", 2000);
 });

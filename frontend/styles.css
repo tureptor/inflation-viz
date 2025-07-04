@@ -29,7 +29,6 @@ body {
 }
 
 #info-tooltip {
-	display: none;
 	position: absolute;
 	top: 24px;
 	left: 0;
@@ -38,14 +37,11 @@ body {
 	border-radius: 6px;
 	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
 	padding: 12px 16px;
-	width: 280px;
+	width: 400px;
 	font-size: 14px;
 	font-weight: strong;
 	z-index: 999;
-}
-
-#info-icon:hover #info-tooltip {
-	display: block;
+	pointer-events: none;
 }
 
 #viz-container {
