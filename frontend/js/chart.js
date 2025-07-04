@@ -16,6 +16,8 @@ export function drawLineChart(data, elementId) {
 	const innerWidth = width - margin.left - margin.right;
 	const innerHeight = height - margin.top - margin.bottom;
 
+	const transitionDuration = 600;
+
 	const svg = d3
 		.select(`#${elementId}`)
 		.attr("width", width)
@@ -136,8 +138,8 @@ export function drawLineChart(data, elementId) {
 		x.domain(d3.extent(dataSubset, (d) => d.date));
 		// y.domain([0, d3.max(dataSubset, d => d.value)]);
 
-		xAxisG.transition().duration(750).call(xAxis);
-		yAxisG.transition().duration(750).call(yAxis);
+		xAxisG.transition().duration(transitionDuration).call(xAxis);
+		yAxisG.transition().duration(transitionDuration).call(yAxis);
 
 		// Year lines
 		const years = d3.timeYear.range(x.domain()[0], x.domain()[1]);
@@ -160,15 +162,14 @@ export function drawLineChart(data, elementId) {
 					.attr("stroke-dasharray", "2,2")
 					.attr("opacity", 0)
 					.transition()
-					.duration(750)
+					.duration(transitionDuration)
 					.attr("opacity", 1),
 			(update) =>
 				update
 					.transition()
-					.duration(750)
+					.duration(transitionDuration)
 					.attr("x1", (d) => x(d))
-					.attr("x2", (d) => x(d))
-					.attr("y2", innerHeight),
+					.attr("x2", (d) => x(d)),
 			(exit) => exit.remove(),
 		);
 
@@ -183,9 +184,10 @@ export function drawLineChart(data, elementId) {
 					.attr("opacity", 0)
 					.attr("d", line)
 					.transition()
-					.duration(750)
+					.duration(transitionDuration)
 					.attr("opacity", 1),
-			(update) => update.transition().duration(750).attr("d", line),
+			(update) =>
+				update.transition().duration(transitionDuration).attr("d", line),
 			(exit) => exit.remove(),
 		);
 
@@ -204,15 +206,16 @@ export function drawLineChart(data, elementId) {
 					.on("mousemove", mouseMoveHandler)
 					.on("mouseleave", mouseLeaveHandler)
 					.transition()
-					.duration(750)
+					.duration(transitionDuration)
 					.attr("r", 4), // Grow into view
 			(update) =>
 				update
 					.transition()
-					.duration(750)
+					.duration(transitionDuration)
 					.attr("cx", (d) => x(d.date))
-					.attr("cy", (d) => y(d.value)),
-			(exit) => exit.transition().duration(500).attr("r", 0).remove(),
+					.attr("cy", (d) => y(d.value))
+					.attr("r", 4),
+			(exit) => exit.remove(),
 		);
 	}
 
