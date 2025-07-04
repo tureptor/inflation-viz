@@ -34,19 +34,41 @@ jobs:
           --output text)
 
         if [ -z "$bucket_arn" ] || [ "$bucket_arn" == "None" ]; then
-          echo "No bucket found with specified tag"
+          echo "No S3 bucket found with specified tag"
           exit 1
         fi
 
-        # ARN format: arn:aws:s3:::bucket-name
         bucket_name=${bucket_arn#arn:aws:s3:::}
-        echo "Found bucket: $bucket_name"
-
-        # Set output for next steps
         echo "bucket_name=$bucket_name" >> $GITHUB_OUTPUT
 
-    - name: Sync frontend to S3 bucket
+    - name: Lookup CloudFront distribution by tag
+      id: lookup_distribution
       run: |
-        aws s3 sync frontend/ s3://$BUCKET_NAME/
+        dist_arn=$(aws resourcegroupstaggingapi get-resources \
+          --region us-east-1 \
+          --tag-filters Key=Name,Values=inflation-viz-cloudfront-distribution \
+          --query 'ResourceTagMappingList[0].ResourceARN' \
+          --output text)
+
+        if [ -z "$dist_arn" ] || [ "$dist_arn" == "None" ]; then
+          echo "No CloudFront distribution found with specified tag"
+          exit 1
+        fi
+
+        distribution_id=${dist_arn##*/}
+        echo "distribution_id=$distribution_id" >> $GITHUB_OUTPUT
+
+    - name: Sync frontend to S3 bucket
       env:
         BUCKET_NAME: ${{ steps.lookup_bucket.outputs.bucket_name }}
+      run: |
+        aws s3 sync frontend/ s3://$BUCKET_NAME/
+
+    - name: Invalidate all CloudFront cache
+      env:
+        DISTRIBUTION_ID: ${{ steps.lookup_distribution.outputs.distribution_id }}
+      run: |
+        aws cloudfront create-invalidation \
+          --region us-east-1 \
+          --distribution-id "$DISTRIBUTION_ID" \
+          --paths "/*"

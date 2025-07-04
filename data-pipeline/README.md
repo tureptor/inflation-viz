@@ -7,8 +7,11 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ## Usage:
 
-`uv run main.py`  
-Might want to `> example.json` for now.
+```
+export AWS_ACCESS_KEY_ID="..."
+export AWS_SECRET_ACCESS_KEY="..."
+uv run main.py
+```
 
 ## Development
 
