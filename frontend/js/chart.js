@@ -240,7 +240,7 @@ export function drawLineChart(data, elementId) {
 		tooltip
 			.style("display", "block")
 			.html(
-				`<strong>${d3.timeFormat("%Y %b")(d.date)}</strong><br/>Value: ${d.value.toFixed(2)}`,
+				`<strong>${d3.timeFormat("%Y %b")(d.date)}</strong><br/>CPIH Index: ${d.value.toFixed(2)}`,
 			)
 			.style("left", `${xPos}px`)
 			.style("top", `${yPos}px`);
