@@ -12,6 +12,7 @@ def upload_to_s3(json_str: str):
         Key=object_key,
         Body=json_str.encode("utf-8"),
         ContentType="application/json",
+        CacheControl="no-cache"
     )
 
 
